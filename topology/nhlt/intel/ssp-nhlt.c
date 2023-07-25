@@ -456,6 +456,8 @@ int nhlt_ssp_get_ep(struct intel_nhlt_params *nhlt, struct endpoint_descriptor *
 	uint32_t bits_per_sample;
 	uint32_t virtualbus_id;
 	uint32_t formats_count;
+	uint8_t device_type;
+	uint8_t config_type;
 	uint8_t *ep_target;
 	size_t blob_size;
 	int ret;
@@ -471,7 +473,8 @@ int nhlt_ssp_get_ep(struct intel_nhlt_params *nhlt, struct endpoint_descriptor *
 	 * vendor_blob sizeof(vendor_blob)
 	 */
 
-	ret = ssp_get_params(nhlt, dai_index, &virtualbus_id, &formats_count);
+	ret = ssp_get_params(nhlt, dai_index, &virtualbus_id, &formats_count,
+			     &device_type, &config_type);
 	if (ret < 0) {
 		fprintf(stderr, "nhlt_ssp_get_ep: ssp_get_params failed\n");
 		return ret;
@@ -483,7 +486,7 @@ int nhlt_ssp_get_ep(struct intel_nhlt_params *nhlt, struct endpoint_descriptor *
 	ep.device_id = NHLT_DEVICE_ID_INTEL_I2S_TDM;
 	ep.revision_id = 0;
 	ep.subsystem_id = 0;
-	ep.device_type = 0;
+	ep.device_type = device_type;
 
 	ep.direction = dir;
 	/* ssp device index */
@@ -491,7 +494,7 @@ int nhlt_ssp_get_ep(struct intel_nhlt_params *nhlt, struct endpoint_descriptor *
 	/* ssp config */
 	ssp_conf.config.capabilities_size = 2;
 	ssp_conf.device_config.virtual_slot = 0;
-	ssp_conf.device_config.config_type = 0;
+	ssp_conf.device_config.config_type = config_type;
 
 	/* formats_config */
 	f_conf.formats_count = formats_count;
